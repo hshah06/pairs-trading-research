@@ -1,0 +1,39 @@
+# --- Python environment & caches -------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Data -------------------------------------------------------------------
+# Raw price downloads are re-created automatically by run_research.py
+# (yfinance), so they don't belong in version control.
+data/
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.zip
+*.gz
+
+# Results in output/ (charts, CSV tables, run log) ARE committed on purpose,
+# so the README's images and numbers render on GitHub without running anything.
+
+# --- Secrets & local config -------------------------------------------------
+.env
+.env.*
+*.key
+.claude/settings.local.json
+
+# --- OS / editor clutter ----------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

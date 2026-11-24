@@ -1,0 +1,451 @@
+[data] Loaded cached prices from data/prices.csv
+[data] 2012-01-03 → 2026-11-24, 3746 trading days
+
+====================================================================================================
+COINTEGRATION & ORNSTEIN–UHLENBECK (in-sample 2012–2020)
+====================================================================================================
+         beta (IS)  ADF p Y  ADF p X  naive ADF p  EG p (IS)  EG p reverse  half-life IS (d)  EG p (OOS, hindsight)  half-life OOS (d, hindsight)
+pair                                                                                                                                             
+KO/PEP       0.629    0.693    0.746        0.001      0.007         0.009            47.678                  0.994                           inf
+CVX/XOM      0.347    0.064    0.560        0.197      0.411         0.975           138.740                  0.202                        85.147
+GDX/GLD      2.048    0.197    0.727        0.136      0.316         0.700            59.868                  0.290                        86.176
+EWC/EWA      0.790    0.132    0.148        0.000      0.001         0.001            30.755                  0.039                        36.630
+SLV/GLD      1.274    0.194    0.727        0.369      0.619         0.940           321.653                  0.275                        87.356
+XLE/XOP      0.352    0.316    0.786        0.066      0.182         0.483           117.356                  0.100                        49.432
+TLT/IEF      1.874    0.935    0.968        0.069      0.189         0.235            50.953                  0.986                      1799.580
+IVV/SPY      0.998    0.890    0.890        0.320      0.566         0.567             8.170                  0.092                         0.675
+
+Read it like this: ADF p on each leg should be LARGE (prices are random walks);
+EG p should be SMALL (< 0.05 → the spread is stationary). Note naive ADF p is
+always smaller than EG p — that's why the naive test is misleading.
+
+====================================================================================================
+BACKTEST, ALL PAIRS (entry ±2.0, exit 0.0, stop ±4.0, 5.0 bps/leg/side, 50.0 bps/yr borrow)
+====================================================================================================
+                sharpe  gross_sharpe   cagr  max_drawdown  n_trades  win_rate  avg_hold_days  pct_time_in_market
+pair    period                                                                                                  
+KO/PEP  IS       0.327         0.396  0.017        -0.102        25     0.680         42.440               0.468
+        OOS     -0.584        -0.522 -0.037        -0.239        13     0.538         64.615               0.567
+CVX/XOM IS       0.561         0.598  0.048        -0.221        21     0.714         46.429               0.430
+        OOS      0.124         0.161  0.007        -0.244        11     0.636         55.545               0.413
+GDX/GLD IS       0.669         0.737  0.036        -0.108        24     0.833         40.875               0.433
+        OOS      0.042         0.119  0.001        -0.155        16     0.750         69.000               0.745
+EWC/EWA IS       0.207         0.321  0.008        -0.109        35     0.714         31.800               0.491
+        OOS      0.026         0.175  0.000        -0.112        25     0.720         37.120               0.627
+SLV/GLD IS      -0.145        -0.079 -0.009        -0.210        18     0.611         65.611               0.521
+        OOS     -0.099        -0.043 -0.007        -0.112        12     0.417         52.583               0.426
+XLE/XOP IS       0.358         0.415  0.020        -0.093        20     0.650         45.050               0.398
+        OOS     -0.073        -0.025 -0.010        -0.245        13     0.538         67.385               0.591
+TLT/IEF IS      -0.111         0.175 -0.002        -0.053        22     0.636         58.182               0.565
+        OOS     -0.042         0.209 -0.001        -0.044        15     0.667         60.467               0.612
+IVV/SPY IS      -2.066         2.105 -0.006        -0.053       102     0.078          2.549               0.115
+        OOS     -2.991         1.192 -0.009        -0.053        69     0.000          3.043               0.142
+
+====================================================================================================
+KALMAN DYNAMIC HEDGE RATIO (memory ≈ 250 days) — spread diagnostics
+====================================================================================================
+         beta (IS)  Kalman beta at split  Kalman beta at end  EG p (IS)  Kalman ADF p (IS)  Kalman ADF p (OOS)  half-life IS (d)  Kalman half-life IS (d)  Kalman half-life OOS (d)
+pair                                                                                                                                                                               
+KO/PEP       0.629                 0.693               1.229      0.007              0.000               0.114            47.678                   30.473                    83.915
+CVX/XOM      0.347                 0.550               0.740      0.411              0.011               0.006           138.740                   47.642                    41.603
+GDX/GLD      2.048                 1.589               1.382      0.316              0.000               0.000            59.868                   24.163                    24.186
+EWC/EWA      0.790                 0.850               1.380      0.001              0.000               0.000            30.755                   22.251                    20.845
+SLV/GLD      1.274                 1.163               1.171      0.619              0.003               0.005           321.653                   61.693                    31.290
+XLE/XOP      0.352                 0.566               0.937      0.182              0.001               0.037           117.356                   38.371                    57.981
+TLT/IEF      1.874                 1.776               0.794      0.189              0.013               0.038            50.953                   32.835                    43.186
+IVV/SPY      0.998                 1.000               1.003      0.566              0.125               0.000             8.170                    4.786                     0.316
+
+====================================================================================================
+BACKTEST, ALL PAIRS — KALMAN HEDGE (same rules, same costs)
+====================================================================================================
+                sharpe  gross_sharpe   cagr  max_drawdown  n_trades  win_rate  avg_hold_days  turnover
+pair    period                                                                                        
+KO/PEP  IS       0.167         0.251  0.007        -0.098        25     0.680         43.720     5.631
+        OOS     -0.739        -0.666 -0.042        -0.273        15     0.467         57.200     5.159
+CVX/XOM IS       0.630         0.697  0.038        -0.089        28     0.786         38.107     6.325
+        OOS      0.266         0.335  0.011        -0.089        14     0.643         34.857     4.838
+GDX/GLD IS       0.339         0.402  0.016        -0.063        20     0.600         43.700     4.500
+        OOS      0.455         0.513  0.028        -0.074        16     0.625         40.938     5.507
+EWC/EWA IS       0.211         0.339  0.009        -0.080        42     0.595         27.405     9.480
+        OOS     -0.039         0.099 -0.002        -0.101        26     0.615         27.346     8.904
+SLV/GLD IS      -0.030         0.035 -0.003        -0.188        22     0.636         46.455     4.967
+        OOS     -0.385        -0.341 -0.032        -0.286        13     0.308         47.077     4.493
+XLE/XOP IS       0.206         0.304  0.007        -0.125        25     0.640         28.480     5.609
+        OOS      0.058         0.142  0.002        -0.101        14     0.571         46.786     4.788
+TLT/IEF IS       0.120         0.386  0.001        -0.040        21     0.667         45.381     4.704
+        OOS      0.433         0.674  0.008        -0.026        20     0.700         36.150     6.862
+IVV/SPY IS      -2.016         2.010 -0.006        -0.052        97     0.082          2.918    21.362
+        OOS     -3.460         2.651 -0.007        -0.039        57     0.018          2.509    19.398
+
+====================================================================================================
+STATIC OLS vs KALMAN — net Sharpe / max drawdown / trades
+====================================================================================================
+method        Kalman                                                static OLS                                             
+period            IS                          OOS                           IS                          OOS                
+        max_drawdown n_trades sharpe max_drawdown n_trades sharpe max_drawdown n_trades sharpe max_drawdown n_trades sharpe
+pair                                                                                                                       
+CVX/XOM       -0.089       28  0.630       -0.089       14  0.266       -0.221       21  0.561       -0.244       11  0.124
+EWC/EWA       -0.080       42  0.211       -0.101       26 -0.039       -0.109       35  0.207       -0.112       25  0.026
+GDX/GLD       -0.063       20  0.339       -0.074       16  0.455       -0.108       24  0.669       -0.155       16  0.042
+IVV/SPY       -0.052       97 -2.016       -0.039       57 -3.460       -0.053      102 -2.066       -0.053       69 -2.991
+KO/PEP        -0.098       25  0.167       -0.273       15 -0.739       -0.102       25  0.327       -0.239       13 -0.584
+SLV/GLD       -0.188       22 -0.030       -0.286       13 -0.385       -0.210       18 -0.145       -0.112       12 -0.099
+TLT/IEF       -0.040       21  0.120       -0.026       20  0.433       -0.053       22 -0.111       -0.044       15 -0.042
+XLE/XOP       -0.125       25  0.206       -0.101       14  0.058       -0.093       20  0.358       -0.245       13 -0.073
+
+Kalman minus static, net Sharpe:
+period      IS    OOS
+pair                 
+CVX/XOM  0.069  0.141
+EWC/EWA  0.004 -0.065
+GDX/GLD -0.329  0.412
+IVV/SPY  0.050 -0.469
+KO/PEP  -0.159 -0.155
+SLV/GLD  0.115 -0.286
+TLT/IEF  0.230  0.475
+XLE/XOP -0.152  0.130
+Pairs where Kalman improved OOS Sharpe: 4 of 8
+
+====================================================================================================
+ROLLING COINTEGRATION MONITOR (504-day window, re-tested every 5 days; OFF above p=0.1, ON below p=0.05)
+====================================================================================================
+         EG p (IS)  EG p (OOS, hindsight)  monitor % on (IS)  monitor % on (OOS)  monitor switch-offs (IS)  monitor switch-offs (OOS) first OOS switch-off
+pair                                                                                                                                                      
+KO/PEP       0.007                  0.994              0.245               0.017                         3                          1           2021-01-04
+CVX/XOM      0.411                  0.202              0.071               0.259                         4                          6           2022-02-25
+GDX/GLD      0.316                  0.290              0.232               0.068                        12                          3           2021-01-04
+EWC/EWA      0.001                  0.039              0.356               0.082                        10                          4           2021-02-16
+SLV/GLD      0.619                  0.275              0.082               0.128                         5                          3           2021-01-04
+XLE/XOP      0.182                  0.100              0.181               0.000                         6                          0           2021-01-04
+TLT/IEF      0.189                  0.986              0.117               0.044                         4                          3           2021-01-04
+IVV/SPY      0.566                  0.092              0.781               0.544                         4                          5           2022-03-04
+
+IS: net Sharpe / max drawdown / trades by method
+method  static OLS                       Kalman                       static OLS + monitor                       Kalman + monitor                       static OLS + time stop                       Kalman + time stop                      
+            sharpe max_drawdown n_trades sharpe max_drawdown n_trades               sharpe max_drawdown n_trades           sharpe max_drawdown n_trades                 sharpe max_drawdown n_trades             sharpe max_drawdown n_trades
+pair                                                                                                                                                                                                                                         
+CVX/XOM      0.561       -0.221       21  0.630       -0.089       28                0.521       -0.057        2            0.470       -0.039        3                  0.561       -0.221       21              0.630       -0.089       28
+EWC/EWA      0.207       -0.109       35  0.211       -0.080       42                0.070       -0.051       16           -0.032       -0.063       17                  0.272       -0.086       36              0.211       -0.080       42
+GDX/GLD      0.669       -0.108       24  0.339       -0.063       20               -0.021       -0.104        8            0.062       -0.052       10                  0.669       -0.108       24              0.339       -0.063       20
+IVV/SPY     -2.066       -0.053      102 -2.016       -0.052       97               -1.530       -0.037       78           -1.390       -0.033       71                 -2.066       -0.053      102             -2.016       -0.052       97
+KO/PEP       0.327       -0.102       25  0.167       -0.098       25                0.646       -0.023        8            0.386       -0.037        6                  0.327       -0.102       25              0.167       -0.098       25
+SLV/GLD     -0.145       -0.210       18 -0.030       -0.188       22               -0.272       -0.029        3            0.070       -0.044        5                 -0.145       -0.210       18             -0.030       -0.188       22
+TLT/IEF     -0.111       -0.053       22  0.120       -0.040       21               -0.314       -0.013        5           -0.431       -0.013        4                 -0.068       -0.048       24              0.121       -0.040       22
+XLE/XOP      0.358       -0.093       20  0.206       -0.125       25               -0.067       -0.053        3           -0.580       -0.070        4                  0.358       -0.093       20              0.206       -0.125       25
+
+OOS: net Sharpe / max drawdown / trades by method
+method  static OLS                       Kalman                       static OLS + monitor                       Kalman + monitor                       static OLS + time stop                       Kalman + time stop                      
+            sharpe max_drawdown n_trades sharpe max_drawdown n_trades               sharpe max_drawdown n_trades           sharpe max_drawdown n_trades                 sharpe max_drawdown n_trades             sharpe max_drawdown n_trades
+pair                                                                                                                                                                                                                                         
+CVX/XOM      0.124       -0.244       11  0.266       -0.089       14               -0.625       -0.224        6           -0.638       -0.099        3                  0.124       -0.244       11              0.266       -0.089       14
+EWC/EWA      0.026       -0.112       25 -0.039       -0.101       26                0.065       -0.014        3            0.086       -0.010        2                  0.063       -0.095       26             -0.039       -0.101       26
+GDX/GLD      0.042       -0.155       16  0.455       -0.074       16                0.414       -0.022        4           -0.555       -0.063        3                 -0.014       -0.173       16              0.455       -0.074       16
+IVV/SPY     -2.991       -0.053       69 -3.460       -0.039       57               -2.723       -0.026       36           -2.582       -0.021       30                 -2.991       -0.053       69             -3.460       -0.039       57
+KO/PEP      -0.584       -0.239       13 -0.739       -0.273       15               -0.319       -0.027        1           -0.338       -0.027        1                 -0.572       -0.239       13             -0.739       -0.273       15
+SLV/GLD     -0.099       -0.112       12 -0.385       -0.286       13               -0.569       -0.078        3           -0.584       -0.084        3                 -0.099       -0.112       12             -0.385       -0.286       13
+TLT/IEF     -0.042       -0.044       15  0.433       -0.026       20               -0.333       -0.006        1           -0.650       -0.006        1                  0.002       -0.040       16              0.433       -0.026       20
+XLE/XOP     -0.073       -0.245       13  0.058       -0.101       14                0.000        0.000        0            0.000        0.000        0                 -0.073       -0.245       13              0.058       -0.101       14
+
+Averages over the 7 non-trivial pairs (excl. IVV/SPY):
+                               sharpe  max_drawdown  n_trades  pct_time_in_market
+method                 period                                                    
+static OLS             IS       0.266        -0.128    23.571               0.473
+                       OOS     -0.086        -0.164    15.000               0.569
+Kalman                 IS       0.235        -0.097    26.143               0.433
+                       OOS      0.007        -0.136    16.857               0.454
+static OLS + monitor   IS       0.080        -0.047     6.429               0.058
+                       OOS     -0.195        -0.053     2.571               0.035
+Kalman + monitor       IS      -0.008        -0.045     7.000               0.065
+                       OOS     -0.382        -0.041     1.857               0.019
+static OLS + time stop IS       0.282        -0.124    24.000               0.467
+                       OOS     -0.081        -0.164    15.286               0.559
+Kalman + time stop     IS       0.235        -0.097    26.286               0.433
+                       OOS      0.007        -0.136    16.857               0.454
+
+BEST PAIR: KO/PEP  (cointegrated in-sample (EG p < 0.05), half-life within (2.0, 60.0) days, and highest in-sample net Sharpe among those)
+Eligible pairs: ['KO/PEP', 'EWC/EWA']
+(Applying the same rule to Kalman IS Sharpe would pick: EWC/EWA)
+
+  hedge ratio β = 0.629  →  for $1 of KO, trade $0.629 of PEP
+  OU: θ = 0.0145/day, μ = 0.0018, σ = 0.0080, half-life = 47.7 days, z lookback = 95 days
+
+====================================================================================================
+KO/PEP: IN-SAMPLE vs OUT-OF-SAMPLE, static vs Kalman
+====================================================================================================
+method        static OLS          Kalman         static OLS + monitor         Kalman + monitor         static OLS + time stop         Kalman + time stop        
+period                IS     OOS      IS     OOS                   IS     OOS               IS     OOS                     IS     OOS                 IS     OOS
+sharpe             0.327  -0.584   0.167  -0.739                0.646  -0.319            0.386  -0.338                  0.327  -0.572              0.167  -0.739
+gross_sharpe       0.396  -0.522   0.251  -0.666                0.696  -0.305            0.426  -0.322                  0.396  -0.510              0.251  -0.666
+cagr               0.017  -0.037   0.007  -0.042                0.012  -0.004            0.008  -0.004                  0.017  -0.036              0.007  -0.042
+ann_vol            0.057   0.062   0.049   0.056                0.019   0.012            0.021   0.011                  0.057   0.062              0.049   0.056
+max_drawdown      -0.102  -0.239  -0.098  -0.273               -0.023  -0.027           -0.037  -0.027                 -0.102  -0.239             -0.098  -0.273
+n_trades          25.000  13.000  25.000  15.000                8.000   1.000            6.000   1.000                 25.000  13.000             25.000  15.000
+win_rate           0.680   0.538   0.680   0.467                0.875   0.000            0.833   0.000                  0.680   0.538              0.680   0.467
+avg_hold_days     42.440  64.615  43.720  57.200               19.125  13.000           29.333  13.000                 42.440  64.538             43.720  57.200
+turnover           5.563   4.424   5.631   5.159                1.780   0.340            1.341   0.341                  5.563   4.424              5.631   5.159
+total_costs        0.036   0.022   0.037   0.024                0.010   0.001            0.008   0.001                  0.036   0.022              0.037   0.024
+
+Cost sensitivity (net Sharpe by cost per leg per side):
+method   static OLS        Kalman       
+period           IS    OOS     IS    OOS
+cost_bps                                
+0             0.374 -0.547  0.224 -0.691
+2             0.355 -0.562  0.201 -0.710
+5             0.327 -0.584  0.167 -0.739
+10            0.278 -0.621  0.110 -0.787
+20            0.181 -0.695 -0.005 -0.882
+
+Kalman memory sensitivity (robustness only; memory=250 was fixed in advance):
+            sharpe        max_drawdown        n_trades     turnover       
+period          IS    OOS           IS    OOS       IS OOS       IS    OOS
+memory_days                                                               
+60           0.197 -1.045       -0.138 -0.320       29  20    6.581  6.919
+125          0.106 -0.850       -0.133 -0.292       26  17    5.886  5.864
+250          0.167 -0.739       -0.098 -0.273       25  15    5.631  5.159
+500          0.165 -0.618       -0.111 -0.268       24  15    5.395  5.148
+1000         0.200 -0.511       -0.100 -0.242       24  15    5.390  5.137
+
+OOS net Sharpe by Kalman memory (days), all pairs:
+         static OLS    K60   K125   K250   K500  K1000
+KO/PEP       -0.584 -1.045 -0.850 -0.739 -0.618 -0.511
+CVX/XOM       0.124 -0.439 -0.306  0.266 -0.074 -0.077
+GDX/GLD       0.042 -0.109  0.297  0.455  0.578  0.512
+EWC/EWA       0.026 -0.022 -0.317 -0.039  0.176  0.017
+SLV/GLD      -0.099 -0.557 -0.282 -0.385 -0.538 -0.533
+XLE/XOP      -0.073 -0.468 -0.114  0.058  0.135 -0.079
+TLT/IEF      -0.042  0.732  0.600  0.433  0.289  0.116
+IVV/SPY      -2.991 -3.480 -3.563 -3.460 -3.204 -3.444
+Memory settings (of 5) where Kalman beat static OOS:
+KO/PEP     1
+CVX/XOM    1
+GDX/GLD    4
+EWC/EWA    1
+SLV/GLD    0
+XLE/XOP    2
+TLT/IEF    5
+IVV/SPY    0
+
+OOS net Sharpe by monitor window (days), all pairs:
+         static (no monitor)  Kalman (no monitor)  static+mon 252d  Kalman+mon 252d  static+mon 504d  Kalman+mon 504d  static+mon 756d  Kalman+mon 756d
+KO/PEP                -0.584               -0.739            0.282            0.023           -0.319           -0.338            0.000            0.000
+CVX/XOM                0.124                0.266            0.162           -0.170           -0.625           -0.638           -0.509           -0.141
+GDX/GLD                0.042                0.455            0.190           -0.401            0.414           -0.555            0.230            0.135
+EWC/EWA                0.026               -0.039           -0.114           -0.145            0.065            0.086           -0.561           -0.552
+SLV/GLD               -0.099               -0.385           -0.148           -0.457           -0.569           -0.584           -0.534           -0.672
+XLE/XOP               -0.073                0.058            0.060           -0.425            0.000            0.000            0.000            0.000
+TLT/IEF               -0.042                0.433            0.091           -0.408           -0.333           -0.650           -0.218            0.453
+IVV/SPY               -2.991               -3.460           -2.360           -2.906           -2.723           -2.582           -2.320           -2.656
+
+Mean over the 7 non-trivial pairs:
+static (no monitor)   -0.086
+Kalman (no monitor)    0.007
+static+mon 252d        0.075
+Kalman+mon 252d       -0.283
+static+mon 504d       -0.195
+Kalman+mon 504d       -0.382
+static+mon 756d       -0.228
+Kalman+mon 756d       -0.111
+
+Trades from the UN-monitored backtests, split by monitor state at entry (7 pairs, excl. IVV/SPY):
+                                    n_trades  mean_return  median_return  win_rate   worst
+method     period monitor_at_entry                                                        
+Kalman     IS     off                    140       0.0041         0.0072    0.6786 -0.1231
+                  on                      43       0.0031         0.0033    0.5814 -0.0527
+           OOS    off                    112      -0.0002         0.0058    0.5982 -0.1197
+                  on                       6      -0.0181        -0.0188    0.1667 -0.0514
+static OLS IS     off                    125       0.0058         0.0084    0.6800 -0.1036
+                  on                      40       0.0101         0.0087    0.7500 -0.0621
+           OOS    off                     94      -0.0013         0.0075    0.6383 -0.1563
+                  on                      11      -0.0063         0.0138    0.5455 -0.1803
+
+All periods and both methods pooled:
+                  n_trades  mean_return  win_rate   worst
+monitor_at_entry                                         
+off                    471       0.0025    0.6518 -0.1563
+on                     100       0.0036    0.6200 -0.1803
+Welch t-test, mean(on) - mean(off) = 0.0011, t = 0.33, p = 0.741
+
+====================================================================================================
+TIME STOP at 3× in-sample half-life
+====================================================================================================
+pair                                        KO/PEP  CVX/XOM  GDX/GLD  EWC/EWA  SLV/GLD  XLE/XOP  TLT/IEF  IVV/SPY
+half-life IS (d)                            47.678  138.740   59.868   30.755  321.653  117.356   50.953    8.170
+time stop (d)                              144.000  417.000  180.000   93.000  965.000  353.000  153.000   25.000
+static OLS | IS Sharpe                       0.327    0.561    0.669    0.207   -0.145    0.358   -0.111   -2.066
+static OLS | IS MaxDD                       -0.102   -0.221   -0.108   -0.109   -0.210   -0.093   -0.053   -0.053
+static OLS | OOS Sharpe                     -0.584    0.124    0.042    0.026   -0.099   -0.073   -0.042   -2.991
+static OLS | OOS MaxDD                      -0.239   -0.244   -0.155   -0.112   -0.112   -0.245   -0.044   -0.053
+static OLS + time stop | IS Sharpe           0.327    0.561    0.669    0.272   -0.145    0.358   -0.068   -2.066
+static OLS + time stop | IS MaxDD           -0.102   -0.221   -0.108   -0.086   -0.210   -0.093   -0.048   -0.053
+static OLS + time stop | IS # time stops     0.000    0.000    0.000    1.000    0.000    0.000    3.000    0.000
+static OLS + time stop | OOS Sharpe         -0.572    0.124   -0.014    0.063   -0.099   -0.073    0.002   -2.991
+static OLS + time stop | OOS MaxDD          -0.239   -0.244   -0.173   -0.095   -0.112   -0.245   -0.040   -0.053
+static OLS + time stop | OOS # time stops    1.000    0.000    1.000    3.000    0.000    0.000    1.000    0.000
+Kalman | IS Sharpe                           0.167    0.630    0.339    0.211   -0.030    0.206    0.120   -2.016
+Kalman | IS MaxDD                           -0.098   -0.089   -0.063   -0.080   -0.188   -0.125   -0.040   -0.052
+Kalman | OOS Sharpe                         -0.739    0.266    0.455   -0.039   -0.385    0.058    0.433   -3.460
+Kalman | OOS MaxDD                          -0.273   -0.089   -0.074   -0.101   -0.286   -0.101   -0.026   -0.039
+Kalman + time stop | IS Sharpe               0.167    0.630    0.339    0.211   -0.030    0.206    0.121   -2.016
+Kalman + time stop | IS MaxDD               -0.098   -0.089   -0.063   -0.080   -0.188   -0.125   -0.040   -0.052
+Kalman + time stop | IS # time stops         0.000    0.000    0.000    0.000    0.000    0.000    1.000    0.000
+Kalman + time stop | OOS Sharpe             -0.739    0.266    0.455   -0.039   -0.385    0.058    0.433   -3.460
+Kalman + time stop | OOS MaxDD              -0.273   -0.089   -0.074   -0.101   -0.286   -0.101   -0.026   -0.039
+Kalman + time stop | OOS # time stops        0.000    0.000    0.000    0.000    0.000    0.000    0.000    0.000
+
+Time-stopped trades vs the same trade without a time stop (7 pairs):
+                   n  stopped_mean  baseline_mean  mean_saved  helped_share  baseline_worst  stopped_worst
+method     period                                                                                         
+Kalman     IS      1       -0.0220        -0.0199     -0.0021        0.0000         -0.0199        -0.0220
+static OLS IS      4       -0.0202        -0.0243      0.0041        0.5000         -0.0467        -0.0399
+           OOS     6       -0.0653        -0.0651     -0.0002        0.3333         -0.1563        -0.1526
+Pooled: n = 11, mean saved per stopped trade = 0.0012, t = 0.34, p = 0.740
+
+Trade durations (un-monitored, no time stop, 7 pairs, 571 trades):
+  median hold = 0.45× half-life; 90th pct = 1.69×; share > 2× = 5.4%; share > 3× = 1.9%
+  losing trades: 202; exit reasons: {'exit': 155, 'stop': 35, 'period_end': 12}
+
+Mean net Sharpe over the 7 non-trivial pairs, by time-stop multiplier:
+             none     2x     3x     4x     5x
+Kalman IS   0.235  0.250  0.235  0.235  0.235
+       OOS  0.007 -0.001  0.007  0.007  0.007
+static IS   0.266  0.285  0.282  0.268  0.265
+       OOS -0.086 -0.068 -0.081 -0.079 -0.100
+
+Trade log for KO/PEP (static OLS + time stop):
+entry_date  exit_date         side   entry_z    exit_z exit_reason  hold_days net_return
+2012-08-28 2012-09-17  long spread -2.127331  0.003023        exit         13       2.1%
+2013-01-25 2013-02-06  long spread -2.163178  0.185821        exit          8       1.8%
+2013-02-14 2013-03-19  long spread -2.107977  0.533711        exit         22       1.8%
+2013-03-21 2013-05-30 short spread  2.037299 -0.160497        exit         48       1.0%
+2013-07-18 2013-11-18  long spread -2.191490  0.025162        exit         86      -0.6%
+2013-12-03 2014-01-23 short spread  2.312899 -0.050309        exit         34       1.1%
+2014-06-27 2014-07-22 short spread  2.000993 -0.031855        exit         16       1.5%
+2014-07-30 2014-09-09  long spread -2.193111  0.073691        exit         28       2.0%
+2014-10-07 2014-10-21 short spread  2.070741 -1.573934        exit         10       4.8%
+2015-06-30 2015-07-14  long spread -2.086732  0.547588        exit          9       1.3%
+2015-08-04 2015-08-12 short spread  2.361656 -0.060608        exit          6       1.0%
+2015-08-21 2015-09-25  long spread -3.326379  0.085147        exit         24       1.4%
+2015-11-19 2016-04-20 short spread  2.122414 -0.068338        exit        103      -2.0%
+2016-07-27 2016-11-28  long spread -3.355941  0.029272        exit         86      -0.6%
+2017-02-09 2017-02-10  long spread -2.303446 -4.370888        stop          1      -1.1%
+2017-05-24 2017-11-17 short spread  2.135434 -0.079711        exit        124      -2.1%
+2018-02-08 2018-02-16  long spread -2.063669  0.113274        exit          6       2.2%
+2018-04-17 2018-06-21 short spread  2.445573 -0.563289        exit         46       1.6%
+2018-10-01 2019-02-14 short spread  2.227724 -2.922215        exit         93       0.7%
+2019-02-20 2019-05-23  long spread -3.539906  0.014567        exit         65       1.8%
+2019-07-01 2019-10-07 short spread  2.323393 -0.073899        exit         68      -1.4%
+2020-01-09 2020-02-28 short spread  2.559079 -0.155459        exit         34       1.0%
+2020-03-13 2020-03-19  long spread -2.820719 -4.584800        stop          4      -6.1%
+2020-04-01 2020-06-08  long spread -2.517837  0.099858        exit         46       5.9%
+2020-09-04 2020-12-31 short spread  2.300270  1.528445  period_end         81      -3.2%
+2021-01-15 2021-02-11  long spread -2.073485  0.668665        exit         18       3.7%
+2021-09-10 2021-12-13  long spread -2.076143  0.163028        exit         65      -0.5%
+2022-01-05 2022-05-19 short spread  2.189165 -0.053220        exit         93      -2.8%
+2022-08-31 2022-11-25  long spread -2.137478  0.039624        exit         60      -1.5%
+2023-05-25 2023-07-26  long spread -2.094735  0.152942        exit         41       1.1%
+2023-09-12 2023-10-24  long spread -2.381044  0.259176        exit         30       1.2%
+2024-01-09 2024-04-04 short spread  2.049019 -0.360192        exit         59       0.9%
+2024-05-30 2024-10-23 short spread  2.164265 -0.083860        exit        101      -5.7%
+2025-02-10 2025-07-10 short spread  2.096726 -0.053760        exit        103      -7.4%
+2025-08-18 2025-11-04  long spread -2.119308  0.050443        exit         55       1.2%
+2025-11-21 2025-12-11 short spread  2.131026 -0.431880        exit         13       3.9%
+2026-01-23 2026-04-16 short spread  2.012729 -0.351161        exit         57       1.4%
+2026-04-29 2026-11-23 short spread  2.269168  1.136303   time_stop        144     -15.3%
+
+Trade log for KO/PEP (static OLS + monitor):
+entry_date  exit_date         side   entry_z    exit_z exit_reason  hold_days net_return
+2013-07-18 2013-07-23  long spread -2.191490 -1.718982 monitor_off          3       0.4%
+2014-06-27 2014-07-22 short spread  2.000993 -0.031855        exit         16       1.5%
+2014-07-30 2014-09-09  long spread -2.193111  0.073691        exit         28       2.0%
+2014-10-07 2014-10-21 short spread  2.070741 -1.573934        exit         10       4.8%
+2015-06-30 2015-07-14  long spread -2.086732  0.547588        exit          9       1.3%
+2015-08-04 2015-08-12 short spread  2.361656 -0.060608        exit          6       1.0%
+2015-08-21 2015-09-25  long spread -3.326379  0.085147        exit         24       1.4%
+2015-11-19 2016-02-12 short spread  2.122414  1.473342 monitor_off         57      -1.4%
+2022-02-07 2022-02-25 short spread  2.203163  2.241595 monitor_off         13      -2.2%
+
+Trade log for KO/PEP (static OLS):
+entry_date  exit_date         side   entry_z    exit_z exit_reason  hold_days net_return
+2012-08-28 2012-09-17  long spread -2.127331  0.003023        exit         13       2.1%
+2013-01-25 2013-02-06  long spread -2.163178  0.185821        exit          8       1.8%
+2013-02-14 2013-03-19  long spread -2.107977  0.533711        exit         22       1.8%
+2013-03-21 2013-05-30 short spread  2.037299 -0.160497        exit         48       1.0%
+2013-07-18 2013-11-18  long spread -2.191490  0.025162        exit         86      -0.6%
+2013-12-03 2014-01-23 short spread  2.312899 -0.050309        exit         34       1.1%
+2014-06-27 2014-07-22 short spread  2.000993 -0.031855        exit         16       1.5%
+2014-07-30 2014-09-09  long spread -2.193111  0.073691        exit         28       2.0%
+2014-10-07 2014-10-21 short spread  2.070741 -1.573934        exit         10       4.8%
+2015-06-30 2015-07-14  long spread -2.086732  0.547588        exit          9       1.3%
+2015-08-04 2015-08-12 short spread  2.361656 -0.060608        exit          6       1.0%
+2015-08-21 2015-09-25  long spread -3.326379  0.085147        exit         24       1.4%
+2015-11-19 2016-04-20 short spread  2.122414 -0.068338        exit        103      -2.0%
+2016-07-27 2016-11-28  long spread -3.355941  0.029272        exit         86      -0.6%
+2017-02-09 2017-02-10  long spread -2.303446 -4.370888        stop          1      -1.1%
+2017-05-24 2017-11-17 short spread  2.135434 -0.079711        exit        124      -2.1%
+2018-02-08 2018-02-16  long spread -2.063669  0.113274        exit          6       2.2%
+2018-04-17 2018-06-21 short spread  2.445573 -0.563289        exit         46       1.6%
+2018-10-01 2019-02-14 short spread  2.227724 -2.922215        exit         93       0.7%
+2019-02-20 2019-05-23  long spread -3.539906  0.014567        exit         65       1.8%
+2019-07-01 2019-10-07 short spread  2.323393 -0.073899        exit         68      -1.4%
+2020-01-09 2020-02-28 short spread  2.559079 -0.155459        exit         34       1.0%
+2020-03-13 2020-03-19  long spread -2.820719 -4.584800        stop          4      -6.1%
+2020-04-01 2020-06-08  long spread -2.517837  0.099858        exit         46       5.9%
+2020-09-04 2020-12-31 short spread  2.300270  1.528445  period_end         81      -3.2%
+2021-01-15 2021-02-11  long spread -2.073485  0.668665        exit         18       3.7%
+2021-09-10 2021-12-13  long spread -2.076143  0.163028        exit         65      -0.5%
+2022-01-05 2022-05-19 short spread  2.189165 -0.053220        exit         93      -2.8%
+2022-08-31 2022-11-25  long spread -2.137478  0.039624        exit         60      -1.5%
+2023-05-25 2023-07-26  long spread -2.094735  0.152942        exit         41       1.1%
+2023-09-12 2023-10-24  long spread -2.381044  0.259176        exit         30       1.2%
+2024-01-09 2024-04-04 short spread  2.049019 -0.360192        exit         59       0.9%
+2024-05-30 2024-10-23 short spread  2.164265 -0.083860        exit        101      -5.7%
+2025-02-10 2025-07-10 short spread  2.096726 -0.053760        exit        103      -7.4%
+2025-08-18 2025-11-04  long spread -2.119308  0.050443        exit         55       1.2%
+2025-11-21 2025-12-11 short spread  2.131026 -0.431880        exit         13       3.9%
+2026-01-23 2026-04-16 short spread  2.012729 -0.351161        exit         57       1.4%
+2026-04-29 2026-11-24 short spread  2.269168  1.265945  period_end        145     -15.6%
+
+Trade log for KO/PEP (Kalman):
+entry_date  exit_date         side   entry_z    exit_z exit_reason  hold_days net_return
+2012-08-23 2012-09-17  long spread -2.016572  0.266426        exit         16       1.8%
+2013-01-22 2013-02-06  long spread -2.085342  0.267181        exit         11       1.2%
+2013-02-14 2013-03-11  long spread -2.036302  0.074879        exit         16       0.5%
+2013-03-20 2013-05-30 short spread  2.038446 -0.293379        exit         49       0.9%
+2013-07-18 2013-09-20  long spread -2.191588  0.196547        exit         45       0.3%
+2013-10-03 2013-10-21  long spread -2.203138  0.188481        exit         12       1.3%
+2013-11-19 2014-01-24 short spread  2.101705 -0.020503        exit         44      -0.1%
+2014-07-30 2014-09-04  long spread -2.078632  0.103369        exit         25       2.0%
+2014-10-07 2014-10-21 short spread  2.238286 -1.553315        exit         10       4.9%
+2015-07-16 2015-08-19 short spread  2.598316 -0.744120        exit         24       1.7%
+2015-08-21 2015-09-25  long spread -2.408511  0.509383        exit         24       1.3%
+2015-10-05 2016-04-20 short spread  2.163801 -0.608108        exit        136      -4.0%
+2016-07-27 2016-11-15  long spread -2.936723  0.050444        exit         78      -0.8%
+2017-01-25 2017-02-09 short spread  2.387660 -0.801774        exit         11       1.7%
+2017-02-10 2017-03-02  long spread -2.576266  0.113691        exit         13       1.3%
+2017-05-02 2017-11-17 short spread  2.248598 -0.749487        exit        140      -3.6%
+2017-12-11 2018-01-24  long spread -2.075939  0.175389        exit         29       2.1%
+2018-02-08 2018-04-04  long spread -2.267515  0.412660        exit         37       1.8%
+2018-04-17 2018-06-20 short spread  2.031370 -0.212688        exit         45       0.8%
+2018-10-02 2019-01-31 short spread  3.170725 -0.375341        exit         82      -1.3%
+2019-02-21 2019-05-23  long spread -3.381805  0.060061        exit         64       0.5%
+2019-07-01 2019-09-30 short spread  2.161205 -0.189152        exit         63      -2.0%
+2020-01-10 2020-02-27 short spread  2.080325 -0.672954        exit         32       0.9%
+2020-03-09 2020-03-13  long spread -2.388203 -4.181984        stop          4      -2.6%
+2020-09-02 2020-12-31 short spread  2.044828  1.272975  period_end         83      -3.6%
+2021-01-14 2021-02-11  long spread -2.038766  0.813587        exit         19       3.2%
+2021-06-28 2021-11-11  long spread -2.224756  0.083112        exit         96      -1.7%
+2021-11-26 2021-12-13  long spread -2.052297  0.477088        exit         11       2.2%
+2022-01-04 2022-05-18 short spread  2.260119 -0.784501        exit         93      -3.9%
+2022-06-16 2022-11-11  long spread -2.075130  0.325283        exit        103      -3.4%
+2023-07-10 2023-07-19  long spread -2.019889  0.667016        exit          7       1.7%
+2023-08-18 2023-09-07 short spread  2.307885 -0.728778        exit         13       2.3%
+2023-10-05 2023-10-17  long spread -2.224506  0.279947        exit          8       1.7%
+2023-10-25 2024-02-08 short spread  2.239206 -0.150484        exit         72      -1.2%
+2024-04-10 2024-05-06  long spread -2.159073  0.061754        exit         18       1.3%
+2024-06-04 2024-10-08 short spread  2.021873 -0.646765        exit         87      -5.5%
+2024-10-21 2025-01-07  long spread -2.271135  0.113567        exit         53       1.4%
+2025-02-10 2025-06-16 short spread  2.047840 -0.047938        exit         87      -9.0%
+2025-07-17 2025-11-04  long spread -3.032020  0.051027        exit         77      -1.1%
+2026-05-11 2026-10-22 short spread  3.050048 -0.046623        exit        114     -11.9%
+
+Outputs written to output/
